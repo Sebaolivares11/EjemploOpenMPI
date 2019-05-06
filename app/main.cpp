@@ -1,10 +1,15 @@
+//Control N|2
+//Sebastian Olivares Pizarro
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
  /*incluimos la libreria para obtener el tiempo*/
 /* cabecera de las llamadas a MPI */
 #include <mpi.h>
-#include <ctime>
+#include <ctime> // libreria para utilizar en tiempo
+
+//obtiene la fecha y hora el formato  YYYY-MM-DD.HH:mm:ss
 
 /**
  * Manda un mensaje desde todos los procesos con
@@ -23,10 +28,10 @@ int main(int argc, char** argv) {
     char mensaje[100]; /* mensaje  */
     MPI_Status estado; /* devuelve estado al recibir*/
     //tiempo en base al sistema
-    time_t now = time(0);
-    // conversiona  string
-    char* dt = ctime(&now);
-
+    time_t now = time(NULL);
+    //convertirlo a la hora local
+    tm tms = *localtime(&now);
+    // cambio de formato
 
     /* Comienza las llamadas a MPI */
     MPI_Init(&argc, &argv);
@@ -45,7 +50,7 @@ int main(int argc, char** argv) {
 
     if (mi_rango != 0) {
         /* Crea mensaje */
-        sprintf(mensaje, "Saludos del procesador %d! en la maquina %s con fecha %s", mi_rango , nombre_procesador, dt);
+        sprintf(mensaje, "Saludos del procesador %d! en la maquina %s con fecha y hora %d/%d/%d   %d:%d:%d", mi_rango , nombre_procesador, tms.tm_year+1900,tms.tm_mon+1,tms.tm_mday,tms.tm_hour,tms.tm_min,tms.tm_sec);
         //sprintf(mensaje, "Saludos desde la maquina %s" , nombre_procesador);
         dest = 0;
         /* Usa strlen+1 para que la marca /0 se transmita */
